@@ -70,12 +70,54 @@ class ProjectController extends Controller
         
         //پایان ثبت اطلاعات کاربر در پایگگاه داده پروژه ها
 
+
+
+
         // انتخاب مهندسی که واجد شرایط و مناسب دریافت  پروژه است
         
         $proj = Project::latest()->first();  // انتخاب آخرین پروژه
-        $roles = Role::with('projects')->get(); 
+        $roles = Role::with('projects')->get(); //لیست همه مهندسین
 
-             
+      
+
+        /*
+        * اگر پروژه تا 500 متر بود به ترتیب حروف الفبا اسم مهندس به هر مهندس 2 پروژه پشت سر هم تعلق میگیرد
+        *
+        */
+
+     
+        $m=0; //حالت اول و حالتی که لوپ کامل شده
+        foreach($roles as $role){ //اگر تعداد پروژه آ همه مهندسان زوج بود و مال هیچ مهندسی 0 نبود لوپ کامل شده
+            $countA = $role->projects()->where('group', 'a')->count();
+            if($countA % 2 != 0 or $countA == 0){
+                $m = 1; //لوپ کامل نشده
+            }
+        }
+
+        if($proj->metraj <= 500 && count($roles) > 0){
+
+            for($i=1;$i<= count($roles);$i++)
+            {
+                $role = Role::find($i);
+                $countA = $role->projects()->where('group', 'a')->count();
+                if($countA % 2 != 0)
+                {
+                    $role->projects()->attach($proj->id);
+                    
+                    break;
+                }elseif($countA == 0){
+                    $role->projects()->attach($proj->id);
+                    break;
+                }elseif($m == 0){
+                    $role->projects()->attach($proj->id);
+                    break;
+                }
+               
+            }           
+        }
+        else{
+
+                
         //  با در نظر داشتن پایه مهندسین تعین مهندسی که مجموع کارکردش از همه کمتر باشه  
         $i = 0;
         $s = 0; //variable for sum
@@ -129,7 +171,7 @@ class ProjectController extends Controller
             $role->projects()->attach($proj->id);
             
         }
- 
+        }   
 
         return redirect(route('projects.index'));
     }
