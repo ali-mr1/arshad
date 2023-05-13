@@ -43,6 +43,7 @@ Route::get('roles/export/', [RoleController::class, 'export'])->name('roles');
 Route::get('roles/export_view/', [RoleController::class, 'export_view'])->name('roles.export_view');
 Route::get('projects/export/', [ProjectController::class, 'export'])->name('projects');
 Route::get('projects/export_view', [ProjectController::class, 'export_view'])->name('projects.export_view');
+Route::post('projects/import',[ProjectController::class, 'import'])->name('projects.import');
 
 Route::get('/test', function(){
 

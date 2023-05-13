@@ -11,9 +11,11 @@ use Illuminate\Support\Facades\Process;
 use App\Exports\ProjectsExport;
 use App\Exports\ProjectsExportView;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ProjectsImport;
 
 class ProjectController extends Controller
 {
+    
     /**
      * Display a listing of the resource.
      */
@@ -22,7 +24,7 @@ class ProjectController extends Controller
        
 
         return view('projects.index', [
-            'projects' => Project::with('user','roles')->latest()->get(),
+            'projects' => Project::with('user','roles')->orderBy('id','desc')->get(),
         ]);
     
     }
@@ -257,5 +259,17 @@ class ProjectController extends Controller
     public function export_view() 
     {
         return Excel::download(new ProjectsExportView, 'projects.xlsx');
+    }
+     /**
+     * 
+     * import xlsx file for excel.
+     */
+
+    public function import() 
+    {
+        
+        Excel::import(new ProjectsImport, request()->file('file'));
+       
+        return redirect(route('projects.index'))->with('success', 'All good!');
     }
 }

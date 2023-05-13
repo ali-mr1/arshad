@@ -15,6 +15,7 @@ class Project extends Model
         'name',
         'metraj',
         'group',
+        'user_id',
     ];
 
     public function user(): belongsTo
