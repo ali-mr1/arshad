@@ -78,7 +78,6 @@
         <td class="border border-slate-300 ...">{{ $c }}</td>
         <td class="border border-slate-300 ...">{{ $b }}</td>
         <td class="border border-slate-300 ...">{{ $a }}</td>
-    
         <td class="border border-slate-300 ...">{{$role->projects->count()}}</td>
         <td class="border border-slate-300 ...">
         {{ $role->projects->sum(function ($project) {
@@ -86,9 +85,45 @@
         </td>
         <td class="border border-slate-300 ..."> {{ $role->name }} </td>
     </tr>   
-  
- 
-    @endforeach
+     @endforeach
 
+     @php
+                $a = 0;
+                $b = 0;
+                $c = 0;
+                $d = 0;
+                $e = 0;
+         $group = $projects->pluck('group');
+    
+         foreach ($group as $m) {
+            switch ($m) {
+                case 'a':
+                $a +=1;
+                break;
+                case 'b':
+                $b +=1;
+                break;    
+                case 'c':
+                $c +=1;
+                break;
+                case 'd':
+                $d +=1;
+                break;
+                
+            }
+         }
+     @endphp
+    <tr>
+        <td class="border border-slate-300 ..."></td>
+        <td class="border border-slate-300 ...">{{ $d }}</td>
+        <td class="border border-slate-300 ...">{{ $c }}</td>
+        <td class="border border-slate-300 ...">{{ $b }}</td>
+        <td class="border border-slate-300 ...">{{$a}}</td>
+        <td class="border border-slate-300 ...">{{$projects->count()}}</td>
+        <td class="border border-slate-300 ..."> {{ $projects->sum('metraj') }}</td>
+        <td class="border border-slate-300 ...">مجموع</td>
+    </tr>  
+
+   
     </tbody> 
 </table>

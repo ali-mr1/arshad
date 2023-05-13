@@ -22,8 +22,9 @@ class RoleController extends Controller
     {
         
         $roles = Role::with('projects')->latest()->get();
+        $projects = Project::all();
 
-        return view('roles.index',compact('roles'));
+        return view('roles.index',compact('roles','projects'));
     }
 
     /**
