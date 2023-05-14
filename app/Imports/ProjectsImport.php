@@ -58,7 +58,7 @@ class ProjectsImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
             Project::create($validated);
                    
             $proj = Project::where('name', $row['name'])-> latest()->first();  // انتخاب آخرین پروژه
-             $roles = Role::with('projects')->get(); //لیست همه مهندسین
+            $roles = Role::with('projects')->get(); //لیست همه مهندسین
             
             /*
             * اگر پروژه تا 500 متر بود به ترتیب حروف الفبا اسم مهندس به هر مهندس 2 پروژه پشت سر هم تعلق میگیرد
@@ -66,12 +66,16 @@ class ProjectsImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
             */
 
             
-            $m=0; //حالت اول و حالتی که لوپ کامل شده
-            foreach($roles as $role){ //اگر تعداد پروژه آ همه مهندسان زوج بود و مال هیچ مهندسی 0 نبود لوپ کامل شده
+            $minr = [];
+            foreach($roles as $role){ 
                 $countA = $role->projects()->where('group', 'a')->count();
-                if($countA % 2 != 0 or $countA == 0){
-                    $m = 1; //لوپ کامل نشده
-                }
+                $minr[$role->id]= $countA;
+                
+            }
+            $miId =1;
+    
+            if (count($minr) != 0 ) {
+            $miId =  min(array_keys($minr, min($minr))); 
             }
 
             if($proj->metraj <= 500 && count($roles) > 0){
@@ -88,7 +92,8 @@ class ProjectsImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
                     }elseif($countA == 0){
                         $role->projects()->attach($proj->id);
                         break;
-                    }elseif($m == 0){
+                    }elseif($role->id == $miId){
+
                         $role->projects()->attach($proj->id);
                         break;
                     }
@@ -106,7 +111,7 @@ class ProjectsImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
             //کمترین  متراژ مهندسان
             foreach($roles as $role){
                 //ابتدا به مهندسی که تازه وارد است یک پروژه میدهیم
-            if ($role->projects->count() == 0){
+            if ($role->projects->count() == 0 ){
                         $role->projects()->attach($proj->id);
                         $t =1;
                         break;
@@ -147,7 +152,7 @@ class ProjectsImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
 
             $role = Role::find($minId);
             
-            if ($t == 0){
+            if ($t == 0 && count($role) > 0){
                 $role->projects()->attach($proj->id);
                 
             }

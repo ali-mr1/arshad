@@ -86,14 +86,19 @@ class ProjectController extends Controller
         * اگر پروژه تا 500 متر بود به ترتیب حروف الفبا اسم مهندس به هر مهندس 2 پروژه پشت سر هم تعلق میگیرد
         *
         */
-
+            
      
-        $m=0; //حالت اول و حالتی که لوپ کامل شده
-        foreach($roles as $role){ //اگر تعداد پروژه آ همه مهندسان زوج بود و مال هیچ مهندسی 0 نبود لوپ کامل شده
+        
+        $minr = [];
+        foreach($roles as $role){ 
             $countA = $role->projects()->where('group', 'a')->count();
-            if($countA % 2 != 0 or $countA == 0){
-                $m = 1; //لوپ کامل نشده
-            }
+            $minr[$role->id]= $countA;
+            
+        }
+        $miId =1;
+
+        if (count($minr) != 0 ) {
+        $miId =  min(array_keys($minr, min($minr))); 
         }
 
         if($proj->metraj <= 500 && count($roles) > 0){
@@ -110,7 +115,8 @@ class ProjectController extends Controller
                 }elseif($countA == 0){
                     $role->projects()->attach($proj->id);
                     break;
-                }elseif($m == 0){
+                }elseif($role->id == $miId){
+
                     $role->projects()->attach($proj->id);
                     break;
                 }
