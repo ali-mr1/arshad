@@ -152,7 +152,7 @@ class ProjectsImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
 
             $role = Role::find($minId);
             
-            if ($t == 0 && count($role) > 0){
+            if ($t == 0  ){
                 $role->projects()->attach($proj->id);
                 
             }
